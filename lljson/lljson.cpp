@@ -87,6 +87,7 @@ PatternList includeFilePatList;
 PatternList excludeFilePatList;
 StringList fileDirList;
 bool showFile = true;
+bool verbose = false;
 
 uint optionErrCnt = 0;
 uint patternErrCnt = 0;
@@ -125,12 +126,13 @@ bool FileMatches(const lstring& inName, const PatternList& patternList, bool emp
 }
 
 // ---------------------------------------------------------------------------
-static void getWord( JsonBuffer& buffer, char delim, string& word) {
+static void getWord( JsonBuffer& buffer, char delim, JsonToken& word) {
     
     const char* lastPtr = strchr(buffer.ptr(), delim);
     word.clear();
     int len = int(lastPtr - buffer.ptr());
     word.append(buffer.ptr(len+1), len);
+    word.isQuoted = true;
 }
 
 static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields);
@@ -161,10 +163,20 @@ static void getGroup(JsonBuffer& buffer, JsonFields& fields) {
 }
 
 // ---------------------------------------------------------------------------
+static void addTokenValue(JsonFields& jsonFields, JsonToken& fieldName, JsonToken& value) {
+    if (!fieldName.empty() && !value.empty()) {
+        jsonFields[fieldName] = new JsonToken(value);
+        fieldName.clear();
+        value.clear();
+    }
+}
+
+// ---------------------------------------------------------------------------
 static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
     
-    string fieldName;
+    JsonToken fieldName = "";
     JsonToken fieldValue;
+    JsonToken tmpValue;
     
     while (buffer.pos < buffer.size()) {
         char chr = buffer.nextChr();
@@ -177,9 +189,12 @@ static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
             case '\t':
             case '\n':
             case '\r':
+                addTokenValue(jsonFields, fieldName, fieldValue);
                 break;
             case ',':
-                return fieldValue;
+                tmpValue = fieldValue;
+                addTokenValue(jsonFields, fieldName, fieldValue);
+                return tmpValue;
                 
             case ':':
                 fieldName = fieldValue;
@@ -189,11 +204,12 @@ static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
             case '{':
             {
                 JsonFields* pJsonFields = new JsonFields();
-                jsonFields[buffer.nextKey()] = pJsonFields;
+                jsonFields[fieldName] = pJsonFields;
                 getGroup(buffer, *pJsonFields);
             }
                 break;
             case '}':
+                addTokenValue(jsonFields, fieldName, fieldValue);
                 return END_GROUP;
                 
             case '"':
@@ -216,8 +232,11 @@ static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
 
 
 // ---------------------------------------------------------------------------
-void JsonDump(JsonBase& base, ostream& out) {
-    base.dump(out);
+void JsonDump(JsonFields& base, ostream& out) {
+    if (base.at("") != NULL) {
+        base[""]->dump(out);
+    }
+    // base.dump(out);
 }
 
 // ---------------------------------------------------------------------------
@@ -288,8 +307,11 @@ bool InspectFile(const lstring& filepath, const lstring& filename)
     }
     
     cerr << "Json fields=" << fields.size() << std::endl;
-    // JsonDump(fields, cout);
-    JsonTranspose(fields, cout);
+    if (verbose) {
+        JsonDump(fields, cout);
+    } else {
+        JsonTranspose(fields, cout);
+    }
     
     return false;
 }
@@ -421,6 +443,10 @@ int main(int argc, char* argv[])
                     
                     switch (cmd[1])
                     {
+                        case 'v':
+                            verbose = true;
+                            break;
+                            
                         case 'i':   // includeFile=<pat>
                             if (ValidOption("includefile", cmd+1))
                             {
