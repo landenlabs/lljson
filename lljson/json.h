@@ -29,6 +29,7 @@
 // COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 #ifndef json_h
 #define json_h
 
@@ -41,6 +42,25 @@ using namespace std;
 
 typedef std::vector<lstring> StringList;
 typedef std::map<string, StringList> MapList;
+
+const char* dot=".";
+
+inline const std::string Join(const StringList& list, const char* delim) {
+    size_t len = list.size() * strlen(delim);
+    for (const auto& item : list) {
+        len += item.length();
+    }
+    std::string buf;
+    buf.reserve(len);
+    for (size_t i=0; i<list.size(); i++) {
+        if (i != 0) {
+            buf += delim;
+        }
+        buf += list[i];
+    }
+    return buf;
+}
+
 
 // Base class for all Json objects
 class JsonBase {
@@ -60,7 +80,7 @@ public:
     ostream& dump(ostream& out) const = 0;
     
     virtual
-    void toMapList(MapList& mapList, string key) const = 0;
+    void toMapList(MapList& mapList, StringList& keys) const = 0;
 };
 
 
@@ -77,7 +97,6 @@ public:
     JsonValue(string& str) : JsonBase(Value), string(str) {
     }
     JsonValue(const JsonValue& other) : JsonBase(other), string(other), isQuoted(other.isQuoted) {
-        // cerr << isQuoted;
     }
     void clear() {
         isQuoted = false;
@@ -88,8 +107,8 @@ public:
         return out;
     }
     
-    void toMapList(MapList& mapList, string key) const {
-        cerr << toString();
+    void toMapList(MapList& mapList, StringList& keys) const {
+        // can't convert a value to a key,value pair.
     }
     
     string toString() const {
@@ -131,8 +150,8 @@ public:
         return cout;
     }
     
-    void toMapList(MapList& mapList, string key) const {
-        StringList& list = mapList[key];
+    void toMapList(MapList& mapList, StringList& keys) const {
+        StringList& list = mapList[Join(keys, dot)];
         JsonArray::const_iterator it = begin();
         while (it != end())
         {
@@ -172,13 +191,15 @@ public:
         return out;
     }
     
-    void toMapList(MapList& mapList, string key) const {
+    void toMapList(MapList& mapList, StringList& keys) const {
         JsonMap::const_iterator it = begin();
         while (it != end())
         {
             std::string name = it->first;
             JsonBase* pValue = it->second;
-            pValue->toMapList(mapList, name);
+            keys.push_back(name);
+            pValue->toMapList(mapList, keys);
+            keys.pop_back();
             it++;
         }
     }
@@ -235,3 +256,4 @@ static JsonToken END_PARSE(JsonToken::EndParse);
 
 
 #endif /* json_h */
+

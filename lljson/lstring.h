@@ -4,14 +4,14 @@
 //
 //-------------------------------------------------------------------------------------------------
 //
-// Author: Dennis Lang - 2015
+// Author: Dennis Lang - 2019
 // http://landenlabs.com
 //
 // This file is part of JavaTree project.
 //
 // ----- License ----
 //
-// Copyright (c) 2015 Dennis Lang
+// Copyright (c) 2019 Dennis Lang
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,6 +35,7 @@
 
 #include <string>
 
+// Enhanced string class
 class lstring : public std::string
 {
 public:

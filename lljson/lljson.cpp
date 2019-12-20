@@ -61,20 +61,18 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
-
-
-#include "ll_stdhdr.h"
-#include "directory.h"
-#include "split.h"
-#include "json.h"
-
-
-
 #include <vector>
 #include <map>
 #include <algorithm>
 #include <regex>
 #include <exception>
+
+// Project files
+#include "ll_stdhdr.h"
+#include "directory.h"
+#include "split.h"
+#include "json.h"
+
 using namespace std;
 
 // Helper types
@@ -112,7 +110,7 @@ lstring& getName(lstring& outName, const lstring& inPath)
 }
 
 // ---------------------------------------------------------------------------
-// Return true if inPath (filename part) matches pattern in patternList
+// Return true if inName matches pattern in patternList
 bool FileMatches(const lstring& inName, const PatternList& patternList, bool emptyResult)
 {
     if (patternList.empty() || inName.empty())
@@ -126,7 +124,8 @@ bool FileMatches(const lstring& inName, const PatternList& patternList, bool emp
 }
 
 // ---------------------------------------------------------------------------
-static void getWord( JsonBuffer& buffer, char delim, JsonToken& word) {
+// Parse json word surrounded by quotes.
+static void getJsonWord( JsonBuffer& buffer, char delim, JsonToken& word) {
     
     const char* lastPtr = strchr(buffer.ptr(), delim);
     word.clear();
@@ -135,10 +134,12 @@ static void getWord( JsonBuffer& buffer, char delim, JsonToken& word) {
     word.isQuoted = true;
 }
 
+// Forward definition
 static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields);
 
 // ---------------------------------------------------------------------------
-static void getArray(JsonBuffer& buffer, JsonArray& array) {
+// Parse json array
+static void getJsonArray(JsonBuffer& buffer, JsonArray& array) {
     JsonFields jsonFields;
     for(;;) {
         JsonToken token = parseJson(buffer, jsonFields);
@@ -152,7 +153,8 @@ static void getArray(JsonBuffer& buffer, JsonArray& array) {
 }
 
 // ---------------------------------------------------------------------------
-static void getGroup(JsonBuffer& buffer, JsonFields& fields) {
+// Parse json group
+static void getJsonGroup(JsonBuffer& buffer, JsonFields& fields) {
     
     for(;;) {
         JsonToken token = parseJson(buffer, fields);
@@ -163,7 +165,7 @@ static void getGroup(JsonBuffer& buffer, JsonFields& fields) {
 }
 
 // ---------------------------------------------------------------------------
-static void addTokenValue(JsonFields& jsonFields, JsonToken& fieldName, JsonToken& value) {
+static void addJsonValue(JsonFields& jsonFields, JsonToken& fieldName, JsonToken& value) {
     if (!fieldName.empty() && !value.empty()) {
         jsonFields[fieldName] = new JsonToken(value);
         fieldName.clear();
@@ -189,11 +191,11 @@ static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
             case '\t':
             case '\n':
             case '\r':
-                addTokenValue(jsonFields, fieldName, fieldValue);
+                addJsonValue(jsonFields, fieldName, fieldValue);
                 break;
             case ',':
                 tmpValue = fieldValue;
-                addTokenValue(jsonFields, fieldName, fieldValue);
+                addJsonValue(jsonFields, fieldName, fieldValue);
                 return tmpValue;
                 
             case ':':
@@ -205,21 +207,21 @@ static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
             {
                 JsonFields* pJsonFields = new JsonFields();
                 jsonFields[fieldName] = pJsonFields;
-                getGroup(buffer, *pJsonFields);
+                getJsonGroup(buffer, *pJsonFields);
             }
                 break;
             case '}':
-                addTokenValue(jsonFields, fieldName, fieldValue);
+                addJsonValue(jsonFields, fieldName, fieldValue);
                 return END_GROUP;
                 
             case '"':
-                getWord(buffer, '"', fieldValue);
+                getJsonWord(buffer, '"', fieldValue);
                 break;
             case '[':
             {
                 JsonArray* pJsonArray = new JsonArray();
                 jsonFields[fieldName] = pJsonArray;
-                getArray(buffer, *pJsonArray);
+                getJsonArray(buffer, *pJsonArray);
             }
                 break;
             case ']':
@@ -230,49 +232,53 @@ static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
     return END_PARSE;
 }
 
-
 // ---------------------------------------------------------------------------
-void JsonDump(JsonFields& base, ostream& out) {
+// Dump parsed json in json format.
+void JsonDump(const JsonFields& base, ostream& out) {
+    // If json parsed, first node can be ignored.
     if (base.at("") != NULL) {
-        base[""]->dump(out);
+        base.at("")->dump(out);
     }
-    // base.dump(out);
 }
 
 // ---------------------------------------------------------------------------
-void JsonTranspose(JsonBase& base, ostream& out) {
-    MapList mapList;
-    base.toMapList(mapList, "");
-    
-    MapList::iterator it = mapList.begin();
-    bool addComma = false;
-    size_t maxRows = 0;
-    while (it != mapList.end()) {
-        if (addComma) cout << ", ";
-        addComma = true;
+// Output json in CSV format with the arrays as columns.
+void JsonTranspose(const JsonFields& base, ostream& out) {
+    if (base.at("") != NULL) {
+        MapList mapList;
+        StringList keys;
+        base.at("")->toMapList(mapList, keys);
         
-        out << it->first;
-        maxRows = std::max(maxRows, it->second.size());
-        it++;
-    }
-    out << std::endl;
-    
-    
-    for (int row=0; row < maxRows; row++) {
-        addComma = false;
-        for (it = mapList.begin(); it != mapList.end(); it++) {
+        MapList::iterator it = mapList.begin();
+        bool addComma = false;
+        size_t maxRows = 0;
+        while (it != mapList.end()) {
             if (addComma) cout << ", ";
             addComma = true;
-            out << it->second.at(row);
+            
+            out << it->first;
+            maxRows = std::max(maxRows, it->second.size());
+            it++;
+        }
+        out << std::endl;
+        
+        
+        for (int row=0; row < maxRows; row++) {
+            addComma = false;
+            for (it = mapList.begin(); it != mapList.end(); it++) {
+                if (addComma) cout << ", ";
+                addComma = true;
+                out << it->second.at(row);
+            }
+            out << std::endl;
         }
         out << std::endl;
     }
-    out << std::endl;
 }
 
-
 // ---------------------------------------------------------------------------
-bool InspectFile(const lstring& filepath, const lstring& filename)
+// Open, read and parse file.
+bool ParseFile(const lstring& filepath, const lstring& filename)
 {
     ifstream        in;
     ofstream        out;
@@ -306,7 +312,6 @@ bool InspectFile(const lstring& filepath, const lstring& filename)
         cerr << ex.what() << ", Error in file:" << filepath << endl;
     }
     
-    cerr << "Json fields=" << fields.size() << std::endl;
     if (verbose) {
         JsonDump(fields, cout);
     } else {
@@ -318,6 +323,7 @@ bool InspectFile(const lstring& filepath, const lstring& filename)
 
 
 // ---------------------------------------------------------------------------
+// Locate matching files which are not in exclude list.
 static size_t InspectFile(const lstring& fullname)
 {
     size_t fileCount = 0;
@@ -328,7 +334,7 @@ static size_t InspectFile(const lstring& fullname)
         && !FileMatches(name, excludeFilePatList, false)
         && FileMatches(name, includeFilePatList, true))
     {
-        if (InspectFile(fullname, name))
+        if (ParseFile(fullname, name))
         {
             fileCount++;
             if (showFile)
@@ -340,6 +346,7 @@ static size_t InspectFile(const lstring& fullname)
 }
 
 // ---------------------------------------------------------------------------
+// Recurse over directories, locate files.
 static size_t InspectFiles(const lstring& dirname)
 {
     Directory_files directory(dirname);
@@ -375,7 +382,6 @@ static size_t InspectFiles(const lstring& dirname)
     return fileCount;
 }
 
-
 // ---------------------------------------------------------------------------
 // Return compiled regular expression from text.
 std::regex getRegEx(const char* value)
@@ -393,7 +399,6 @@ std::regex getRegEx(const char* value)
     patternErrCnt++;
     return std::regex("");
 }
-
 
 // ---------------------------------------------------------------------------
 // Validate option matchs and optionally report problem to user.
@@ -422,8 +427,35 @@ int main(int argc, char* argv[])
     {
         cerr << "\n" << argv[0] << "  Dennis Lang v1.1 (landenlabs.com) " __DATE__ << "\n"
         << "\nDes: Json parse and output as transposed CSV\n"
-        "Use: lljson [options] directories...\n"
+        "Use: lljson [options] directories...   or  files\n"
         "\n"
+        " Options (only first unique characters required, options can be repeated):\n"
+        "   -includefile=<filePattern>\n"
+        "   -excludefile=<filePattern>\n"
+        "   -verbose\n"
+        "\n"
+        " Example:\n"
+        "   lljson -inc=*.json -ex=foo.json -ex=bar.json dir1/subdir dir2 file1.json file2.json "
+        "\n"
+        " Example input json:\n"
+        "   {\n"
+        "      \"cloudCover\": [\n"
+        "        10,\n"
+        "        30,\n"
+        "        49\n"
+        "      ],\n"
+        "        \"dayOfWeek\": [\n"
+        "        \"Monday\",\n"
+        "        \"Tuesday\",\n"
+        "        \"Wednesday\"\n"
+        "      ]\n"
+        "   }\n"
+        "\n"
+        "   Output transposed CSV\n"
+        "    cloudCover,  dayOfWeek\n"
+        "     10, Monday\n"
+        "     30, Tuesday\n"
+        "     49, WednesDay\n"
         "\n";
     }
     else
@@ -443,10 +475,6 @@ int main(int argc, char* argv[])
                     
                     switch (cmd[1])
                     {
-                        case 'v':
-                            verbose = true;
-                            break;
-                            
                         case 'i':   // includeFile=<pat>
                             if (ValidOption("includefile", cmd+1))
                             {
@@ -468,6 +496,12 @@ int main(int argc, char* argv[])
                             break;
                     }
                 } else {
+                    switch (argStr[1]) {
+                        case 'v':   // -v=true or -v=anyThing
+                            verbose = true;
+                            continue;
+                    }
+                    
                     if (endCmds == argv[argn]) {
                         doParseCmds = false;
                     } else {

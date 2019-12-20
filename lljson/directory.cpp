@@ -4,14 +4,14 @@
 //
 //-------------------------------------------------------------------------------------------------
 //
-// Author: Dennis Lang - 2015
+// Author: Dennis Lang - 2019
 // http://landenlabs.com
 //
-// This file is part of JavaTree project.
+// This file is part of lljson project.
 //
 // ----- License ----
 //
-// Copyright (c) 2015 Dennis Lang
+// Copyright (c) 2019 Dennis Lang
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -65,7 +65,6 @@ static lstring& GetFullPath(lstring& fname)
 }
 
 //-------------------------------------------------------------------------------------------------
-
 Directory_files::Directory_files(const lstring& dirName) :
     my_dir_hnd(INVALID_HANDLE_VALUE),
     my_dirName(dirName)
@@ -73,7 +72,6 @@ Directory_files::Directory_files(const lstring& dirName) :
 }
 
 //-------------------------------------------------------------------------------------------------
-
 Directory_files::~Directory_files()
 {
     if (my_dir_hnd != INVALID_HANDLE_VALUE)
@@ -81,7 +79,6 @@ Directory_files::~Directory_files()
 }
 
 //-------------------------------------------------------------------------------------------------
-
 void Directory_files::close()
 {
     if (my_dir_hnd != INVALID_HANDLE_VALUE)
@@ -92,7 +89,6 @@ void Directory_files::close()
 }
 
 //-------------------------------------------------------------------------------------------------
-
 bool Directory_files::begin()
 {
     close();
@@ -129,7 +125,6 @@ bool Directory_files::begin()
 }
 
 //-------------------------------------------------------------------------------------------------
-
 bool Directory_files::more()
 {
     if (my_dir_hnd == INVALID_HANDLE_VALUE)
@@ -153,14 +148,12 @@ bool Directory_files::more()
 }
 
 //-------------------------------------------------------------------------------------------------
-
 bool Directory_files::is_directory() const
 {
    return (my_dir_hnd != INVALID_HANDLE_VALUE && isDir(my_dirent.dwFileAttributes));
 }
 
 //-------------------------------------------------------------------------------------------------
-
 const char* Directory_files::name() const
 {
     return (my_dir_hnd != INVALID_HANDLE_VALUE) ?
@@ -168,7 +161,6 @@ const char* Directory_files::name() const
 }
 
 //-------------------------------------------------------------------------------------------------
-
 lstring& Directory_files::fullName(lstring& fname) const
 {
     fname = my_dirName + SLASH + name();
@@ -184,7 +176,6 @@ lstring& Directory_files::fullName(lstring& fname) const
 lstring Directory_files::SLASH = "/";
 
 //-------------------------------------------------------------------------------------------------
-
 Directory_files::Directory_files(const lstring& dirName)
 {
     realpath(dirName.c_str(), my_fullname);
@@ -194,7 +185,6 @@ Directory_files::Directory_files(const lstring& dirName)
 }
 
 //-------------------------------------------------------------------------------------------------
-
 Directory_files::~Directory_files()
 {
     if (my_pDir != NULL)
@@ -202,7 +192,6 @@ Directory_files::~Directory_files()
 }
 
 //-------------------------------------------------------------------------------------------------
-
 bool Directory_files::more()
 {
     if (my_is_more)
@@ -226,14 +215,12 @@ bool Directory_files::more()
 }
 
 //-------------------------------------------------------------------------------------------------
-
 bool Directory_files::is_directory() const
 {
     return my_pDirEnt->d_type == DT_DIR;
 }
 
 //-------------------------------------------------------------------------------------------------
-
 lstring& Directory_files::fullName(lstring& fname) const
 {
     return join(fname, my_baseDir, my_pDirEnt->d_name);
@@ -241,7 +228,6 @@ lstring& Directory_files::fullName(lstring& fname) const
 
 
 //-------------------------------------------------------------------------------------------------
-
 lstring& Directory_files::join(lstring& outFull, const char* dir, const char* name)
 {
     
