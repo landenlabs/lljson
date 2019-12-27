@@ -33,14 +33,14 @@
 #include "directory.h"
 
 #include <iostream>
+#include <stdio.h>
+#include <errno.h>
+
+#include "ll_stdhdr.h"
 
 #ifdef HAVE_WIN
 #include <windows.h>
 #endif
-
-#include <stdio.h>
-#include <errno.h>
-#include "ll_stdhdr.h"
 
 #ifdef WIN32
 

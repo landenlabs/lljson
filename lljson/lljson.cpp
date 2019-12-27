@@ -54,6 +54,7 @@
 
 // 4291 - No matching operator delete found
 #pragma warning( disable : 4291 )
+#define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
 #include <ctype.h>
@@ -66,6 +67,7 @@
 #include <algorithm>
 #include <regex>
 #include <exception>
+ 
 
 // Project files
 #include "ll_stdhdr.h"
@@ -93,6 +95,11 @@ uint patternErrCnt = 0;
 
 #ifdef WIN32
 const char SLASH_CHAR('\\');
+#include <assert.h>
+#define strncasecmp _strnicmp
+#if !defined(S_ISREG) && defined(S_IFMT) && defined(S_IFREG)
+#define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
+#endif
 #else
 const char SLASH_CHAR('/');
 #endif
@@ -263,7 +270,7 @@ void JsonTranspose(const JsonFields& base, ostream& out) {
         out << std::endl;
         
         
-        for (int row=0; row < maxRows; row++) {
+        for (unsigned row=0; row < maxRows; row++) {
             addComma = false;
             for (it = mapList.begin(); it != mapList.end(); it++) {
                 if (addComma) cout << ", ";
@@ -472,8 +479,8 @@ int main(int argc, char* argv[])
                 {
                     lstring cmd = cmdValue[0];
                     lstring value = cmdValue[1];
-                    
-                    switch (cmd[1])
+
+                    switch (cmd[(unsigned)1])
                     {
                         case 'i':   // includeFile=<pat>
                             if (ValidOption("includefile", cmd+1))
@@ -496,7 +503,7 @@ int main(int argc, char* argv[])
                             break;
                     }
                 } else {
-                    switch (argStr[1]) {
+                    switch (argStr[(unsigned)1]) {
                         case 'v':   // -v=true or -v=anyThing
                             verbose = true;
                             continue;

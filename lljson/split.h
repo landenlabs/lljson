@@ -32,8 +32,12 @@
 
 #pragma once
 
+#define NOMINMAX  
 #include <vector>
+#include <limits>
 #include "lstring.h"
+
+#undef max
 
 // Split string into parts.
 class Split : public std::vector<lstring>
@@ -59,7 +63,8 @@ public:
             push_back(str.substr(lastPos, pos - lastPos));
     }
     
-    Split(const lstring& str, const char* delimList, int maxSplit=numeric_limits<int>::max())
+
+    Split(const lstring& str, const char* delimList, int maxSplit=std::numeric_limits<int>::max())
     {
         size_t lastPos = 0;
         size_t pos = str.find_first_of(delimList);
