@@ -83,14 +83,14 @@ typedef unsigned int uint;
 
 
 // Runtime options
-PatternList includeFilePatList;
-PatternList excludeFilePatList;
-StringList fileDirList;
-bool showFile = true;
-bool verbose = false;
+static PatternList includeFilePatList;
+static PatternList excludeFilePatList;
+static StringList fileDirList;
+static bool showFile = true;
+static bool verbose = false;
 
-uint optionErrCnt = 0;
-uint patternErrCnt = 0;
+static uint optionErrCnt = 0;
+static uint patternErrCnt = 0;
 
 
 #ifdef WIN32
@@ -106,6 +106,7 @@ const char SLASH_CHAR('/');
 
 // ---------------------------------------------------------------------------
 // Extract name part from path.
+static 
 lstring& getName(lstring& outName, const lstring& inPath)
 {
     size_t nameStart = inPath.rfind(SLASH_CHAR) + 1;
@@ -118,6 +119,7 @@ lstring& getName(lstring& outName, const lstring& inPath)
 
 // ---------------------------------------------------------------------------
 // Return true if inName matches pattern in patternList
+static 
 bool FileMatches(const lstring& inName, const PatternList& patternList, bool emptyResult)
 {
     if (patternList.empty() || inName.empty())
@@ -132,7 +134,8 @@ bool FileMatches(const lstring& inName, const PatternList& patternList, bool emp
 
 // ---------------------------------------------------------------------------
 // Parse json word surrounded by quotes.
-static void getJsonWord( JsonBuffer& buffer, char delim, JsonToken& word) {
+static 
+void getJsonWord( JsonBuffer& buffer, char delim, JsonToken& word) {
     
     const char* lastPtr = strchr(buffer.ptr(), delim);
     word.clear();
@@ -142,11 +145,13 @@ static void getJsonWord( JsonBuffer& buffer, char delim, JsonToken& word) {
 }
 
 // Forward definition
-static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields);
+static 
+JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields);
 
 // ---------------------------------------------------------------------------
 // Parse json array
-static void getJsonArray(JsonBuffer& buffer, JsonArray& array) {
+static 
+void getJsonArray(JsonBuffer& buffer, JsonArray& array) {
     JsonFields jsonFields;
     for(;;) {
         JsonToken token = parseJson(buffer, jsonFields);
@@ -161,7 +166,8 @@ static void getJsonArray(JsonBuffer& buffer, JsonArray& array) {
 
 // ---------------------------------------------------------------------------
 // Parse json group
-static void getJsonGroup(JsonBuffer& buffer, JsonFields& fields) {
+static 
+void getJsonGroup(JsonBuffer& buffer, JsonFields& fields) {
     
     for(;;) {
         JsonToken token = parseJson(buffer, fields);
@@ -172,7 +178,8 @@ static void getJsonGroup(JsonBuffer& buffer, JsonFields& fields) {
 }
 
 // ---------------------------------------------------------------------------
-static void addJsonValue(JsonFields& jsonFields, JsonToken& fieldName, JsonToken& value) {
+static 
+void addJsonValue(JsonFields& jsonFields, JsonToken& fieldName, JsonToken& value) {
     if (!fieldName.empty() && !value.empty()) {
         jsonFields[fieldName] = new JsonToken(value);
         fieldName.clear();
@@ -181,7 +188,8 @@ static void addJsonValue(JsonFields& jsonFields, JsonToken& fieldName, JsonToken
 }
 
 // ---------------------------------------------------------------------------
-static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
+static 
+JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
     
     JsonToken fieldName = "";
     JsonToken fieldValue;
@@ -241,6 +249,7 @@ static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
 
 // ---------------------------------------------------------------------------
 // Dump parsed json in json format.
+static
 void JsonDump(const JsonFields& base, ostream& out) {
     // If json parsed, first node can be ignored.
     if (base.at("") != NULL) {
@@ -250,6 +259,7 @@ void JsonDump(const JsonFields& base, ostream& out) {
 
 // ---------------------------------------------------------------------------
 // Output json in CSV format with the arrays as columns.
+static
 void JsonTranspose(const JsonFields& base, ostream& out) {
     if (base.at("") != NULL) {
         MapList mapList;
@@ -285,6 +295,7 @@ void JsonTranspose(const JsonFields& base, ostream& out) {
 
 // ---------------------------------------------------------------------------
 // Open, read and parse file.
+static
 bool ParseFile(const lstring& filepath, const lstring& filename)
 {
     ifstream        in;
@@ -331,7 +342,8 @@ bool ParseFile(const lstring& filepath, const lstring& filename)
 
 // ---------------------------------------------------------------------------
 // Locate matching files which are not in exclude list.
-static size_t InspectFile(const lstring& fullname)
+static 
+size_t InspectFile(const lstring& fullname)
 {
     size_t fileCount = 0;
     lstring name;
@@ -354,7 +366,8 @@ static size_t InspectFile(const lstring& fullname)
 
 // ---------------------------------------------------------------------------
 // Recurse over directories, locate files.
-static size_t InspectFiles(const lstring& dirname)
+static 
+size_t InspectFiles(const lstring& dirname)
 {
     Directory_files directory(dirname);
     lstring fullname;
@@ -391,6 +404,7 @@ static size_t InspectFiles(const lstring& dirname)
 
 // ---------------------------------------------------------------------------
 // Return compiled regular expression from text.
+static
 std::regex getRegEx(const char* value)
 {
     try {
@@ -409,6 +423,7 @@ std::regex getRegEx(const char* value)
 
 // ---------------------------------------------------------------------------
 // Validate option matchs and optionally report problem to user.
+static
 bool ValidOption(const char* validCmd, const char* possibleCmd, bool reportErr = true)
 {
     // Starts with validCmd else mark error

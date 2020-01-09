@@ -43,7 +43,7 @@ using namespace std;
 typedef std::vector<lstring> StringList;
 typedef std::map<string, StringList> MapList;
 
-const char* dot=".";
+static const char* dot=".";
 
 inline const std::string Join(const StringList& list, const char* delim) {
     size_t len = list.size() * strlen(delim);
@@ -219,7 +219,7 @@ public:
         if (pos < size()) {
             return at(pos++);
         }
-        return NULL;
+        return '\0';
     }
     
     string nextKey() {
