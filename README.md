@@ -1,4 +1,4 @@
-b #lljson
+#lljson
 OSX / Linux / DOS  Json conversion of arrays to transposed columns in CSV format. 
 
 LLJson parses json files and outputs them as a transposed set of CSV columns. 
