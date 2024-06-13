@@ -38,7 +38,7 @@
 using namespace std;
 typedef unsigned short  UShort;
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #define HAVE_WIN
 #define NOMINMAX
 #define _CRT_SECURE_NO_WARNINGS

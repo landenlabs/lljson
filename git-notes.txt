@@ -1,0 +1,21 @@
+git remote add origin https://landenlabs@github.com/landenlabs/lljson
+
+git checkout origin master
+git pull origin master
+git checkout -f master
+
+git add lljson-ms\lljson.sln
+git add lljson-ms\lljson.vcxproj
+
+git status
+git push -u origin master
+
+git commit -m "add ms solution and code fixes for dos/windows"
+git push -u origin master
+git add lljson-ms\Debug\lljson.exe
+git add -f  lljson-ms\Debug\lljson.exe
+git commit -m "add dos executable"
+git push -u origin master
+
+
+

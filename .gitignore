@@ -1,0 +1,19 @@
+DerivedData/
+Backup/
+foo*
+
+# MAC
+.DS_Store
+
+
+# Xcode
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcuserstate
+xcuserdata
+*.xcworkspace
+
+# json.xcodeproj/xcuserdata/*
+# json.xcodeproj/project.xcworkspace/xcuserdata/*
