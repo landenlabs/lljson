@@ -131,9 +131,9 @@ bool FileMatches(const lstring& inName, const PatternList& patternList, bool emp
     return false;
 }
 
-static void assertValid(const char* ptr) {
+static void assertValid(const char* ptr, const char* body) {
     if (ptr == nullptr) {
-        std::cerr << "Invalid json near " << ptr << endl;
+        std::cerr << "Invalid json near " << body << endl;
         abort();
     }
 }
@@ -143,16 +143,15 @@ static void assertValid(const char* ptr) {
 static void getJsonWord( JsonBuffer& buffer, char delim, JsonToken& word) {
     
     const char* lastPtr = strchr(buffer.ptr(), delim);
-    assertValid(lastPtr);
-
-    if (lastPtr[-1] == '\\') {
+    while (lastPtr != nullptr && lastPtr[-1] == '\\') {
         lastPtr = strchr(lastPtr+1, delim);
     }
-    assertValid(lastPtr);
+    assertValid(lastPtr,  buffer.ptr());
     word.clear();
     int len = int(lastPtr - buffer.ptr());
     word.append(buffer.ptr(len+1), len);
     word.isQuoted = true;
+ 
 }
 
 // Forward definition
@@ -170,12 +169,11 @@ static void getJsonArray(JsonBuffer& buffer, JsonArray& array) {
                 array.push_back(jsonValue);
             }
             else {
-                // JsonFields* dupFields  = new JsonFields(jsonFields);
-                // array.push_back(dupFields);
                 if (jsonFields.size() == 1 && jsonFields.cbegin()->first.empty()) {
                     array.push_back(jsonFields.cbegin()->second);
                 } else {
-                    assert(false);
+                    JsonFields* dupFields  = new JsonFields(jsonFields);
+                    array.push_back(dupFields);
                 }
                 jsonFields.clear();
             }
@@ -253,7 +251,7 @@ static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
                     buffer.backup();
                     return fieldValue;
                 }
-                
+                break;
             case '"':
                 getJsonWord(buffer, '"', fieldValue);
                 break;

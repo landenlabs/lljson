@@ -57,6 +57,10 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "test2/const.json"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "test/data1.json"
             isEnabled = "NO">
          </CommandLineArgument>
@@ -66,7 +70,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "test/ref.json"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
    </LaunchAction>
