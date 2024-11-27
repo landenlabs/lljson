@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------------------------
 //
-// File: json.h   Author: Dennis Lang  Desc: Parse json
+// File: json.hpp  Author: Dennis Lang  Desc: Parse json
 //
 //-------------------------------------------------------------------------------------------------
 //
@@ -46,7 +46,7 @@ using namespace std;
 typedef std::vector<lstring> StringList;
 typedef std::map<string, StringList> MapList;
 
-const char* dot=".";
+const char* dot = ".";
 
 inline const std::string Join(const StringList& list, const char* delim) {
     size_t len = list.size() * strlen(delim);
@@ -55,7 +55,7 @@ inline const std::string Join(const StringList& list, const char* delim) {
     }
     std::string buf;
     buf.reserve(len);
-    for (size_t i=0; i<list.size(); i++) {
+    for (size_t i = 0; i < list.size(); i++) {
         if (i != 0) {
             buf += delim;
         }
@@ -74,14 +74,14 @@ public:
         mJtype = jtype;
     }
     JsonBase(const JsonBase& other) {
-          mJtype = other.mJtype;
+        mJtype = other.mJtype;
     }
     virtual
     string toString() const = 0;
-    
+
     virtual
     ostream& dump(ostream& out) const = 0;
-    
+
     virtual
     void toMapList(MapList& mapList, StringList& keys) const = 0;
 };
@@ -91,7 +91,7 @@ public:
 class JsonValue : public JsonBase, public string {
 public:
     const char* quote = "\"";
-    
+
     bool isQuoted = false;
     JsonValue() : JsonBase(Value), string() {
     }
@@ -109,13 +109,13 @@ public:
         out << toString();
         return out;
     }
-    
+
     void toMapList(MapList& mapList, StringList& keys) const {
         // can't convert a value to a key,value pair.
         StringList& list = mapList[Join(keys, dot)];
         list.push_back(toString());
     }
-    
+
     string toString() const {
         if (isQuoted) {
             return string(quote) + *this + string(quote);
@@ -133,14 +133,13 @@ class JsonArray : public JsonBase, public VecJson {
 public:
     JsonArray() : JsonBase(Array) {
     }
-    
+
     string toString() const {
         std::ostringstream ostr;
         ostr << "[\n";
         JsonArray::const_iterator it = begin();
         bool addComma = false;
-        while (it != end())
-        {
+        while (it != end()) {
             if (addComma)
                 ostr << ",\n";
             addComma = true;
@@ -149,20 +148,19 @@ public:
         ostr << "\n]";
         return ostr.str();
     }
-    
+
     ostream& dump(ostream& out) const {
         cout << toString();
         return cout;
     }
-    
+
     void toMapList(MapList& mapList, StringList& keys) const {
         // StringList& list = mapList[Join(keys, dot)];
         JsonArray::const_iterator it = begin();
         StringList itemKeys;
         std::set<lstring> uniqueKeys;
 
-        while (it != end())
-        {
+        while (it != end()) {
             // list.push_back((*it++)->toString());
             itemKeys.clear();
             JsonBase* pValue = *it;
@@ -172,7 +170,7 @@ public:
             }
             it++;
         }
- 
+
         for (auto& key : uniqueKeys) {
             keys.push_back(key);
         }
@@ -184,7 +182,7 @@ class JsonMap : public JsonBase, public MapJson {
 public:
     JsonMap() : JsonBase(Map), MapJson() {
     }
-    
+
     string toString() const {
         ostringstream out;
         //bool wrapped = false;
@@ -192,15 +190,14 @@ public:
         out << "{\n";
         JsonMap::const_iterator it = begin();
         bool addComma = false;
-        while (it != end())
-        {
+        while (it != end()) {
             if (addComma)
                 out << ",\n";
             addComma = true;
-            
+
             JsonValue name = it->first;
             JsonBase* pValue = it->second;
-            if (!name.empty()) {
+            if (! name.empty()) {
                 // if (!wrapped) {
                 //     wrapped = true;
                 //    out << "{\n";
@@ -211,21 +208,20 @@ public:
             it++;
         }
         // if (wrapped) {
-            out << "\n}\n";
+        out << "\n}\n";
         // }
 
         return out.str();
     }
-    
+
     ostream& dump(ostream& out) const {
         out << toString();
         return out;
     }
-    
+
     void toMapList(MapList& mapList, StringList& keys) const {
         JsonMap::const_iterator it = begin();
-        while (it != end())
-        {
+        while (it != end()) {
             std::string name = it->first;
             JsonBase* pValue = it->second;
             keys.push_back(name);
@@ -243,7 +239,7 @@ typedef JsonMap JsonFields;
 class JsonBuffer : public std::vector<char> {
 public:
     char keyBuf[10];
-    
+
     size_t pos = 0;
     int seq = 100;
 
@@ -263,12 +259,12 @@ public:
         assert(pos > 0);
         pos--;
     }
-    
+
     string nextKey() {
         snprintf(keyBuf, sizeof(keyBuf), "%03d", seq++);
         return *(new string(keyBuf));
     }
-    
+
     const char* ptr(int len = 0) {
         const char* nowPtr = &at(pos);
         pos = std::min(pos + len, size());

@@ -1,15 +1,14 @@
 #!/bin/tcsh
 
-set lljson=./DerivedData/Build/Products/Release/lljson
+# set prog=./DerivedData/Build/Products/Release/lljson
+set proj=lljson
 
 echo "input file=$1"
-$lljson -verbose $1 >! foo.json
+$prog -verbose $1 >! /tmp/wxnew.json
 
-ls -al $1 foo.json
-jd $1 foo.json
+ls -al $1 /tmp/wxnew.json
+jd $1 /tmp/wxnew.json
 
-jq --sort-keys "." foo.json >!  foo1.json
-jq --sort-keys "." $1       >!  foo2.json
-meld foo1.json foo2.json
-   
-   
+jq --sort-keys "." /tmp/wxnew.json >!  /tmp/wxNewSort.json
+jq --sort-keys "." $1              >!  /tmp/wxOrgSort.json
+diff /tmp/wxNewSort.json /tmp/wxOrgSort.json

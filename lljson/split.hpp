@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------------------------
 //
-// File: split.h  Author: Dennis Lang Desc: Split string into tokens   
+// File: split.hpp Author: Dennis Lang Desc: Split string into tokens
 //
 //-------------------------------------------------------------------------------------------------
 //
@@ -32,27 +32,24 @@
 
 #pragma once
 
-#define NOMINMAX  
+#define NOMINMAX
 #include <vector>
 #include <limits>
-#include "lstring.h"
+#include "lstring.hpp"
 
 #undef max
 
 // Split string into parts.
-class Split : public std::vector<lstring>
-{
+class Split : public std::vector<lstring> {
 public:
     typedef size_t(*Find_of)(const lstring& str, const char* delimList, size_t begIdx);
 
-    Split(const lstring& str, const char* delimList, Find_of find_of)
-    {
+    Split(const lstring& str, const char* delimList, Find_of find_of) {
         size_t lastPos = 0;
         // size_t pos = str.find_first_of(delimList);
         size_t pos = (*find_of)(str, delimList, 0);
 
-        while (pos != lstring::npos)
-        {
+        while (pos != lstring::npos) {
             if (pos != lastPos)
                 push_back(str.substr(lastPos, pos - lastPos));
             lastPos = pos + 1;
@@ -62,15 +59,13 @@ public:
         if (lastPos < str.length())
             push_back(str.substr(lastPos, pos - lastPos));
     }
-    
 
-    Split(const lstring& str, const char* delimList, int maxSplit=std::numeric_limits<int>::max())
-    {
+
+    Split(const lstring& str, const char* delimList, int maxSplit = std::numeric_limits<int>::max()) {
         size_t lastPos = 0;
         size_t pos = str.find_first_of(delimList);
-        
-        while (pos != lstring::npos && --maxSplit > 0)
-        {
+
+        while (pos != lstring::npos && --maxSplit > 0) {
             if (pos != lastPos)
                 push_back(str.substr(lastPos, pos - lastPos));
             lastPos = pos + 1;
