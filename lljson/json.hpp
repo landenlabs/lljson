@@ -46,7 +46,11 @@ using namespace std;
 typedef std::vector<lstring> StringList;
 typedef std::map<string, StringList> MapList;
 
+<<<<<<< HEAD:lljson/json.hpp
 const char* dot = ".";
+=======
+static const char* dot=".";
+>>>>>>> 070e2530a3a2cc7e0ce414a8cb8e054454973828:lljson/json.h
 
 inline const std::string Join(const StringList& list, const char* delim) {
     size_t len = list.size() * strlen(delim);
@@ -253,7 +257,7 @@ public:
         if (pos < size()) {
             return at(pos++);
         }
-        return NULL;
+        return '\0';
     }
     void backup() {
         assert(pos > 0);
