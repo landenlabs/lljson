@@ -139,28 +139,17 @@ static void assertValid(const char* ptr, const char* body) {
 // ---------------------------------------------------------------------------
 // Parse json word surrounded by quotes.
 static void getJsonWord( JsonBuffer& buffer, char delim, JsonToken& word) {
-<<<<<<< HEAD
 
     const char* lastPtr = strchr(buffer.ptr(), delim);
     while (lastPtr != nullptr && lastPtr[-1] == '\\') {
         lastPtr = strchr(lastPtr + 1, delim);
-=======
-    
-    const char* lastPtr = strchr(buffer.ptr(), delim);
-    while (lastPtr != nullptr && lastPtr[-1] == '\\') {
-        lastPtr = strchr(lastPtr+1, delim);
->>>>>>> 9f25bd9 (fix quote escaping)
     }
     assertValid(lastPtr,  buffer.ptr());
     word.clear();
     int len = int(lastPtr - buffer.ptr());
     word.append(buffer.ptr(len + 1), len);
     word.isQuoted = true;
-<<<<<<< HEAD
 
-=======
- 
->>>>>>> 9f25bd9 (fix quote escaping)
 }
 
 // Forward definition
@@ -176,12 +165,7 @@ static void getJsonArray(JsonBuffer& buffer, JsonArray& array) {
             if (! token.empty()) {
                 JsonValue* jsonValue = new JsonValue(token);
                 array.push_back(jsonValue);
-<<<<<<< HEAD
             } else {
-=======
-            }
-            else {
->>>>>>> 9f25bd9 (fix quote escaping)
                 if (jsonFields.size() == 1 && jsonFields.cbegin()->first.empty()) {
                     array.push_back(jsonFields.cbegin()->second);
                 } else {
@@ -260,7 +244,6 @@ static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
                 return END_GROUP;
             } else {
                 addJsonValue(jsonFields, fieldName, fieldValue);
-<<<<<<< HEAD
                 buffer.backup();
                 return fieldValue;
             }
@@ -284,52 +267,6 @@ static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
                 return END_ARRAY;
             }
             break;
-=======
-                return tmpValue;
-                
-            case ':':
-                fieldName = fieldValue;
-                fieldValue.clear();
-                break;
-                
-            case '{':
-                {
-                    JsonFields* pJsonFields = new JsonFields();
-                    jsonFields[fieldName] = pJsonFields;
-                    fieldName.clear();
-                    getJsonGroup(buffer, *pJsonFields);
-                }
-                break;
-            case '}':
-                if (fieldValue.empty()) {
-                     return END_GROUP;
-                } else {
-                    addJsonValue(jsonFields, fieldName, fieldValue);
-                    buffer.backup();
-                    return fieldValue;
-                }
-                break;
-            case '"':
-                getJsonWord(buffer, '"', fieldValue);
-                break;
-            case '[':
-                {
-                    JsonArray* pJsonArray = new JsonArray();
-                    jsonFields[fieldName] = pJsonArray;
-                    fieldName.clear();
-                    getJsonArray(buffer, *pJsonArray);
-                }
-                break;
-            case ']':
-                // addJsonValue(jsonFields, fieldName, fieldValue);
-                if (jsonFields.size() != 0 || !fieldValue.empty()) {
-                    buffer.backup();
-                    return fieldValue;
-                } else {
-                    return END_ARRAY;
-                }
-                break;
->>>>>>> 9f25bd9 (fix quote escaping)
         }
     }
 
