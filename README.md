@@ -3,9 +3,12 @@ OSX / Linux / DOS  Json conversion of arrays to transposed columns in CSV format
 
 LLJson parses json files and outputs them as a transposed set of CSV columns. 
 
+<<<<<<< HEAD
   [![Build status](https://travis-ci.org/landenlabs/lljson.svg?branch=master)](https://travis-ci.org/landenlabs/lljson)
   
   
+=======
+>>>>>>> main
 This input json file:
 
 <pre>
