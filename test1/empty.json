@@ -1,0 +1,27 @@
+[
+    {
+        "description": "integer type matches integers",
+        "tests": [
+            {
+                "description": "an array is not an integer",
+                "data": [],
+                "valid": false
+            },
+            {
+                "description": "a boolean is not an integer",
+                "data": {},
+                "valid": false
+            },
+            {
+                "description": "a boolean is not an integer",
+                "data": "",
+                "valid": false
+            },
+            {
+                "description": "null is not an integer",
+                "data": null,
+                "valid": false
+            }
+        ]
+    }
+]
