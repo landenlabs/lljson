@@ -83,32 +83,15 @@ typedef unsigned int uint;
 
 
 // Runtime options
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> main
 PatternList includeFilePatList;
 PatternList excludeFilePatList;
 StringList fileDirList;
 bool showFile = true;
 bool verbose = false;
 bool instream = false;
-<<<<<<< HEAD
-=======
-static PatternList includeFilePatList;
-static PatternList excludeFilePatList;
-static StringList fileDirList;
-static bool showFile = true;
-static bool verbose = false;
->>>>>>> 070e2530a3a2cc7e0ce414a8cb8e054454973828
-
-static uint optionErrCnt = 0;
-static uint patternErrCnt = 0;
-=======
 
 uint optionErrCnt = 0;
 uint patternErrCnt = 0;
->>>>>>> main
 
 
 #if defined(_WIN32) || defined(_WIN64)
@@ -124,17 +107,7 @@ uint patternErrCnt = 0;
 
 // ---------------------------------------------------------------------------
 // Extract name part from path.
-<<<<<<< HEAD
-<<<<<<< HEAD
 lstring& getName(lstring& outName, const lstring& inPath) {
-=======
-static 
-lstring& getName(lstring& outName, const lstring& inPath)
-{
->>>>>>> 070e2530a3a2cc7e0ce414a8cb8e054454973828
-=======
-lstring& getName(lstring& outName, const lstring& inPath) {
->>>>>>> main
     size_t nameStart = inPath.rfind(SLASH_CHAR) + 1;
     if (nameStart == 0)
         outName = inPath;
@@ -145,17 +118,7 @@ lstring& getName(lstring& outName, const lstring& inPath) {
 
 // ---------------------------------------------------------------------------
 // Return true if inName matches pattern in patternList
-<<<<<<< HEAD
-<<<<<<< HEAD
 bool FileMatches(const lstring& inName, const PatternList& patternList, bool emptyResult) {
-=======
-static 
-bool FileMatches(const lstring& inName, const PatternList& patternList, bool emptyResult)
-{
->>>>>>> 070e2530a3a2cc7e0ce414a8cb8e054454973828
-=======
-bool FileMatches(const lstring& inName, const PatternList& patternList, bool emptyResult) {
->>>>>>> main
     if (patternList.empty() || inName.empty())
         return emptyResult;
 
@@ -175,19 +138,8 @@ static void assertValid(const char* ptr, const char* body) {
 
 // ---------------------------------------------------------------------------
 // Parse json word surrounded by quotes.
-<<<<<<< HEAD
-<<<<<<< HEAD
 static void getJsonWord( JsonBuffer& buffer, char delim, JsonToken& word) {
 
-=======
-static 
-void getJsonWord( JsonBuffer& buffer, char delim, JsonToken& word) {
-    
->>>>>>> 070e2530a3a2cc7e0ce414a8cb8e054454973828
-=======
-static void getJsonWord( JsonBuffer& buffer, char delim, JsonToken& word) {
-
->>>>>>> main
     const char* lastPtr = strchr(buffer.ptr(), delim);
     while (lastPtr != nullptr && lastPtr[-1] == '\\') {
         lastPtr = strchr(lastPtr + 1, delim);
@@ -201,21 +153,11 @@ static void getJsonWord( JsonBuffer& buffer, char delim, JsonToken& word) {
 }
 
 // Forward definition
-<<<<<<< HEAD
-static 
-JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields);
-
-// ---------------------------------------------------------------------------
-// Parse json array
-static 
-void getJsonArray(JsonBuffer& buffer, JsonArray& array) {
-=======
 static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields);
 
 // ---------------------------------------------------------------------------
 // Parse json array
 static void getJsonArray(JsonBuffer& buffer, JsonArray& array) {
->>>>>>> main
     JsonFields jsonFields;
     for(;;) {
         JsonToken token = parseJson(buffer, jsonFields);
@@ -240,19 +182,8 @@ static void getJsonArray(JsonBuffer& buffer, JsonArray& array) {
 
 // ---------------------------------------------------------------------------
 // Parse json group
-<<<<<<< HEAD
-<<<<<<< HEAD
 static void getJsonGroup(JsonBuffer& buffer, JsonFields& fields) {
 
-=======
-static 
-void getJsonGroup(JsonBuffer& buffer, JsonFields& fields) {
-    
->>>>>>> 070e2530a3a2cc7e0ce414a8cb8e054454973828
-=======
-static void getJsonGroup(JsonBuffer& buffer, JsonFields& fields) {
-
->>>>>>> main
     for(;;) {
         JsonToken token = parseJson(buffer, fields);
         if (token.mToken == JsonToken::EndGroup) {
@@ -262,19 +193,8 @@ static void getJsonGroup(JsonBuffer& buffer, JsonFields& fields) {
 }
 
 // ---------------------------------------------------------------------------
-<<<<<<< HEAD
-<<<<<<< HEAD
 static void addJsonValue(JsonFields& jsonFields, JsonToken& fieldName, JsonToken& value) {
     if (! fieldName.empty() /* && !value.empty() */ ) {
-=======
-static 
-void addJsonValue(JsonFields& jsonFields, JsonToken& fieldName, JsonToken& value) {
-    if (!fieldName.empty() && !value.empty()) {
->>>>>>> 070e2530a3a2cc7e0ce414a8cb8e054454973828
-=======
-static void addJsonValue(JsonFields& jsonFields, JsonToken& fieldName, JsonToken& value) {
-    if (! fieldName.empty() /* && !value.empty() */ ) {
->>>>>>> main
         jsonFields[fieldName] = new JsonToken(value);
     }
     fieldName.clear();
@@ -282,19 +202,8 @@ static void addJsonValue(JsonFields& jsonFields, JsonToken& fieldName, JsonToken
 }
 
 // ---------------------------------------------------------------------------
-<<<<<<< HEAD
-<<<<<<< HEAD
 static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
 
-=======
-static 
-JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
-    
->>>>>>> 070e2530a3a2cc7e0ce414a8cb8e054454973828
-=======
-static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
-
->>>>>>> main
     JsonToken fieldName = "";
     JsonToken fieldValue;
     JsonToken tmpValue;
@@ -366,10 +275,6 @@ static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
 
 // ---------------------------------------------------------------------------
 // Dump parsed json in json format.
-<<<<<<< HEAD
-static
-=======
->>>>>>> main
 void JsonDump(const JsonFields& base, ostream& out) {
     // If json parsed, first node can be ignored.
     if (base.at("") != NULL) {
@@ -379,10 +284,6 @@ void JsonDump(const JsonFields& base, ostream& out) {
 
 // ---------------------------------------------------------------------------
 // Output json in CSV format with the arrays as columns.
-<<<<<<< HEAD
-static
-=======
->>>>>>> main
 void JsonTranspose(const JsonFields& base, ostream& out) {
     if (base.at("") != NULL) {
         MapList mapList;
@@ -421,17 +322,7 @@ void JsonTranspose(const JsonFields& base, ostream& out) {
 
 // ---------------------------------------------------------------------------
 // Open, read and parse file.
-<<<<<<< HEAD
-<<<<<<< HEAD
 bool ParseFile(const lstring& filepath, const lstring& filename) {
-=======
-static
-bool ParseFile(const lstring& filepath, const lstring& filename)
-{
->>>>>>> 070e2530a3a2cc7e0ce414a8cb8e054454973828
-=======
-bool ParseFile(const lstring& filepath, const lstring& filename) {
->>>>>>> main
     ifstream        in;
     ofstream        out;
     struct stat     filestat;
@@ -469,17 +360,7 @@ bool ParseFile(const lstring& filepath, const lstring& filename) {
 
 // ---------------------------------------------------------------------------
 // Locate matching files which are not in exclude list.
-<<<<<<< HEAD
-<<<<<<< HEAD
 static size_t InspectFile(const lstring& fullname) {
-=======
-static 
-size_t InspectFile(const lstring& fullname)
-{
->>>>>>> 070e2530a3a2cc7e0ce414a8cb8e054454973828
-=======
-static size_t InspectFile(const lstring& fullname) {
->>>>>>> main
     size_t fileCount = 0;
     lstring name;
     getName(name, fullname);
@@ -499,17 +380,7 @@ static size_t InspectFile(const lstring& fullname) {
 
 // ---------------------------------------------------------------------------
 // Recurse over directories, locate files.
-<<<<<<< HEAD
-<<<<<<< HEAD
 static size_t InspectFiles(const lstring& dirname) {
-=======
-static 
-size_t InspectFiles(const lstring& dirname)
-{
->>>>>>> 070e2530a3a2cc7e0ce414a8cb8e054454973828
-=======
-static size_t InspectFiles(const lstring& dirname) {
->>>>>>> main
     Directory_files directory(dirname);
     lstring fullname;
 
@@ -541,17 +412,7 @@ static size_t InspectFiles(const lstring& dirname) {
 
 // ---------------------------------------------------------------------------
 // Return compiled regular expression from text.
-<<<<<<< HEAD
-<<<<<<< HEAD
 std::regex getRegEx(const char* value) {
-=======
-static
-std::regex getRegEx(const char* value)
-{
->>>>>>> 070e2530a3a2cc7e0ce414a8cb8e054454973828
-=======
-std::regex getRegEx(const char* value) {
->>>>>>> main
     try {
         std::string valueStr(value);
         return std::regex(valueStr);
@@ -566,17 +427,7 @@ std::regex getRegEx(const char* value) {
 
 // ---------------------------------------------------------------------------
 // Validate option matchs and optionally report problem to user.
-<<<<<<< HEAD
-<<<<<<< HEAD
 bool ValidOption(const char* validCmd, const char* possibleCmd, bool reportErr = true) {
-=======
-static
-bool ValidOption(const char* validCmd, const char* possibleCmd, bool reportErr = true)
-{
->>>>>>> 070e2530a3a2cc7e0ce414a8cb8e054454973828
-=======
-bool ValidOption(const char* validCmd, const char* possibleCmd, bool reportErr = true) {
->>>>>>> main
     // Starts with validCmd else mark error
     size_t validLen = strlen(validCmd);
     size_t possibleLen = strlen(possibleCmd);
