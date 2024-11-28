@@ -88,12 +88,13 @@ PatternList excludeFilePatList;
 StringList fileDirList;
 bool showFile = true;
 bool verbose = false;
+bool instream = false;
 
 uint optionErrCnt = 0;
 uint patternErrCnt = 0;
 
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 const char SLASH_CHAR('\\');
 #include <assert.h>
 #define strncasecmp _strnicmp
@@ -151,8 +152,15 @@ static void getJsonArray(JsonBuffer& buffer, JsonArray& array) {
     for(;;) {
         JsonToken token = parseJson(buffer, jsonFields);
         if (token.mToken == JsonToken::Value) {
-            JsonValue* jsonValue = new JsonValue(token);
-            array.push_back(jsonValue);
+            if (!token.empty()) {
+                JsonValue* jsonValue = new JsonValue(token);
+                array.push_back(jsonValue);
+            }
+            else {
+                JsonFields* dupFields = new JsonFields(jsonFields);
+                array.push_back(dupFields);
+                jsonFields.clear();
+            }
         } else {
             return;
         }
@@ -218,8 +226,14 @@ static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
             }
                 break;
             case '}':
-                addJsonValue(jsonFields, fieldName, fieldValue);
-                return END_GROUP;
+                if (fieldValue.empty()) {
+                    return END_GROUP;
+                }
+                else {
+                    addJsonValue(jsonFields, fieldName, fieldValue);
+                    buffer.backup();
+                    return fieldValue;
+                }
                 
             case '"':
                 getJsonWord(buffer, '"', fieldValue);
@@ -232,7 +246,14 @@ static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
             }
                 break;
             case ']':
-                return END_ARRAY;
+                // addJsonValue(jsonFields, fieldName, fieldValue);
+                if (jsonFields.size() != 0 || !fieldValue.empty()) {
+                    buffer.backup();
+                    return fieldValue;
+                } else {
+                    return END_ARRAY;
+                }
+                break;
         }
     }
     
@@ -275,7 +296,10 @@ void JsonTranspose(const JsonFields& base, ostream& out) {
             for (it = mapList.begin(); it != mapList.end(); it++) {
                 if (addComma) cout << ", ";
                 addComma = true;
-                out << it->second.at(row);
+                if (row < it->second.size()) {
+                    out << it->second.at(row);
+                } 
+                  
             }
             out << std::endl;
         }
@@ -305,8 +329,6 @@ bool ParseFile(const lstring& filepath, const lstring& filename)
             assert(inCnt < buffer.size());
             in.close();
             buffer.push_back('\0');
-            
-            
             parseJson(buffer, fields);
         }
         else
@@ -361,6 +383,7 @@ static size_t InspectFiles(const lstring& dirname)
     
     size_t fileCount = 0;
     
+#if 0
     struct stat filestat;
     try {
         if (stat(dirname, &filestat) == 0 && S_ISREG(filestat.st_mode))
@@ -372,6 +395,7 @@ static size_t InspectFiles(const lstring& dirname)
     {
         // Probably a pattern, let directory scan do its magic.
     }
+#endif
     
     while (directory.more())
     {
@@ -507,6 +531,12 @@ int main(int argc, char* argv[])
                         case 'v':   // -v=true or -v=anyThing
                             verbose = true;
                             continue;
+                        case 'i':
+                            if (ValidOption("instream", argStr + 1))
+                            {
+                                instream = true;
+                            }
+                            break;
                     }
                     
                     if (endCmds == argv[argn]) {
@@ -527,9 +557,28 @@ int main(int argc, char* argv[])
         if (patternErrCnt == 0 && optionErrCnt == 0 && fileDirList.size() != 0)
         {
             if (fileDirList.size() == 1 && fileDirList[0] == "-") {
-                string filePath;
-                while (std::getline(std::cin, filePath)) {
-                    std::cerr << "File Matches=" << InspectFiles(filePath) << std::endl;
+                if (instream) {
+                    JsonBuffer inJbuffer;
+                    JsonFields outJfields;
+                    string lineBuf;
+                    while (std::getline(std::cin, lineBuf)) {
+                        inJbuffer.clear();
+                        inJbuffer.push(lineBuf.c_str());
+                        parseJson(inJbuffer, outJfields);
+                    }
+
+                    if (verbose) {
+                        JsonDump(outJfields, cout);
+                    }
+                    else {
+                        JsonTranspose(outJfields, cout);
+                    }
+                }
+                else {
+                    string filePath;
+                    while (std::getline(std::cin, filePath)) {
+                        std::cerr << "File Matches=" << InspectFiles(filePath) << std::endl;
+                    }
                 }
             } else {
                 for (auto const& filePath : fileDirList)

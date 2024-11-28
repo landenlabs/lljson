@@ -35,6 +35,7 @@
 
 #include <vector>
 #include <map>
+#include <set>
 #include <algorithm>
 #include <regex>
 #include <exception>
@@ -109,6 +110,8 @@ public:
     
     void toMapList(MapList& mapList, StringList& keys) const {
         // can't convert a value to a key,value pair.
+        StringList& list = mapList[Join(keys, dot)];
+        list.push_back(toString());
     }
     
     string toString() const {
@@ -151,11 +154,25 @@ public:
     }
     
     void toMapList(MapList& mapList, StringList& keys) const {
-        StringList& list = mapList[Join(keys, dot)];
+        // StringList& list = mapList[Join(keys, dot)];
         JsonArray::const_iterator it = begin();
+        StringList itemKeys;
+        std::set<lstring> uniqueKeys;
+
         while (it != end())
         {
-            list.push_back((*it++)->toString());
+            // list.push_back((*it++)->toString());
+            itemKeys.clear();
+            JsonBase* pValue = *it;
+            pValue->toMapList(mapList, itemKeys);
+            for (auto& key : itemKeys) {
+                uniqueKeys.insert(key);
+            }
+            it++;
+        }
+ 
+        for (auto& key : uniqueKeys) {
+            keys.push_back(key);
         }
     }
 };
@@ -168,7 +185,8 @@ public:
     
     string toString() const {
         ostringstream out;
-        out << "{\n";
+        bool wrapped = false;
+
         JsonMap::const_iterator it = begin();
         bool addComma = false;
         while (it != end())
@@ -179,10 +197,19 @@ public:
             
             JsonValue name = it->first;
             JsonBase* pValue = it->second;
-            out << name.toString() << ": " << pValue->toString();
+            if (!name.empty()) {
+                if (!wrapped) {
+                    wrapped = true;
+                    out << "{\n";
+                }
+                out << name.toString() << ": ";
+            }
+            out << pValue->toString();
             it++;
         }
-        out << "\n}\n";
+        if (wrapped) {
+            out << "\n}\n";
+        }
         return out.str();
     }
     
@@ -215,11 +242,21 @@ public:
     
     size_t pos = 0;
     int seq = 100;
+
+    void push(const char* cptr) {
+        while (char c = *cptr++) {
+            push_back(c);
+        }
+        push_back('\0');
+    }
     char nextChr() {
         if (pos < size()) {
             return at(pos++);
         }
         return NULL;
+    }
+    void backup() {
+        pos--;
     }
     
     string nextKey() {

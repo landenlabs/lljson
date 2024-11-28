@@ -42,7 +42,7 @@
 #include <windows.h>
 #endif
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 
 const lstring ANY("\\*");
 lstring Directory_files::SLASH = "\\";
