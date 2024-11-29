@@ -56,7 +56,7 @@ quiz.maths.q1.options, quiz.maths.q2.options, quiz.sport.q1.options
 
 Visit home website
 
-[http://landenlabs.com](http://landenlabs.com)
+[https://landenlabs.com](https://landenlabs.com)
 
 
 Help Banner:

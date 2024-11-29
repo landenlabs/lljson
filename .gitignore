@@ -1,19 +1,14 @@
-DerivedData/
-Backup/
-foo*
 
-# MAC
+# Mac exclude
 .DS_Store
-
-
-# Xcode
-*.pbxuser
-*.mode1v3
-*.mode2v3
-*.perspectivev3
+/DerivedData
+/*/project.xcworkspace/
+/*/xcuserdata/
 *.xcuserstate
-xcuserdata
-*.xcworkspace
 
-# json.xcodeproj/xcuserdata/*
-# json.xcodeproj/project.xcworkspace/xcuserdata/*
+# Windows VisualStudio
+.ipch/
+.vs/
+.obj
+.exe
+
