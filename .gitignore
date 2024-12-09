@@ -1,0 +1,17 @@
+# git-notes.txt
+
+# Mac exclude
+.DS_Store
+/DerivedData
+/*/project.xcworkspace/
+/*/xcuserdata/
+*.xcuserstate
+
+# Windows VisualStudio
+.ipch/
+.vs/
+.obj
+.exe
+x64/
+
+
