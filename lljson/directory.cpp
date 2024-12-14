@@ -146,7 +146,7 @@ lstring& Directory_files::fullName(lstring& fname) const {
 }
 
 //-------------------------------------------------------------------------------------------------
-bool Directory_files::exists(const char *path) {
+bool Directory_files::exists( const char* path) {
     const DWORD attr = GetFileAttributes(path);
     return (attr != INVALID_FILE_ATTRIBUTES);
 }
@@ -168,8 +168,11 @@ Directory_files::Directory_files(const lstring& dirName) {
 
 //-------------------------------------------------------------------------------------------------
 Directory_files::~Directory_files() {
-    if (my_pDir != NULL)
+    if (my_pDir != NULL) {
         closedir(my_pDir);
+        my_pDir = NULL;
+        my_is_more = false;
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
