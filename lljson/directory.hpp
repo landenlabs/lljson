@@ -20,14 +20,14 @@
 //          }
 //-------------------------------------------------------------------------------------------------
 //
-// Author: Dennis Lang - 2019
+// Author: Dennis Lang - 2022
 // https://landenlabs.com
 //
 // This file is part of lljson project.
 //
 // ----- License ----
 //
-// Copyright (c) 2019 Dennis Lang
+// Copyright (c) 2022  Dennis Lang
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -47,31 +47,31 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #pragma once
+
 #include "ll_stdhdr.hpp"
 #ifdef HAVE_WIN
     #include <windows.h>
 #else
-    typedef unsigned int  DWORD;
-    typedef struct dirent Dirent;
-    typedef struct timespec Timespec;
+typedef unsigned int  DWORD;
+typedef struct dirent Dirent;
+typedef struct timespec Timespec;
 
-    #define _strtoi64 strtoll
+#define _strtoi64 strtoll
 
-    #include <sys/types.h>
-    #include <sys/stat.h>
-    #include <sys/dirent.h>
-    #include <dirent.h>
-    #include <unistd.h>
-    #include <limits.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/dirent.h>
+#include <dirent.h>
+#include <unistd.h>
+#include <limits.h>
 
-    const DWORD FILE_ATTRIBUTE_DIRECTORY = S_IFDIR;
-    const DWORD FILE_ATTRIBUTE_DEVICE = S_IFBLK;
-    const DWORD FILE_ATTRIBUTE_NORMAL = S_IFREG;
+const DWORD FILE_ATTRIBUTE_DIRECTORY = S_IFDIR;
+const DWORD FILE_ATTRIBUTE_DEVICE = S_IFBLK;
+const DWORD FILE_ATTRIBUTE_NORMAL = S_IFREG;
 
-    const DWORD FILE_ATTRIBUTE_READ = S_IRUSR; // owner has read permission
-    const DWORD FILE_ATTRIBUTE_WRIT = S_IWUSR; // has write permission
-    const DWORD FILE_ATTRIBUTE_EXEC = S_IXUSR; // has execute permission
-
+const DWORD FILE_ATTRIBUTE_READ = S_IRUSR; // owner has read permission
+const DWORD FILE_ATTRIBUTE_WRIT = S_IWUSR; // has write permission
+const DWORD FILE_ATTRIBUTE_EXEC = S_IXUSR; // has execute permission
 
 #endif
 
@@ -103,6 +103,9 @@ public:
 
     // Utility to join directory and name
     static lstring& join(lstring& outPath, const char* inDir, const char* inName);
+
+    // Return true if path points to  a file or directory
+    static bool exists(const char* path);
 
     static lstring SLASH;  // "/" linux, or "\" windows
 

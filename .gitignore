@@ -1,3 +1,4 @@
+# .gitignore
 
 # Mac exclude
 .DS_Store
@@ -8,7 +9,7 @@
 
 # Windows VisualStudio
 .ipch/
+x64/
 .vs/
 .obj
 .exe
-

@@ -24,15 +24,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		B9777EC623A974600070DFCD /* json.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = json.h; sourceTree = "<group>"; };
+		B9777EC623A974600070DFCD /* json.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
 		B9B44DBD1D8F65CD00782398 /* lljson */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = lljson; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9B44DCA1D8F661700782398 /* directory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = directory.cpp; sourceTree = "<group>"; };
-		B9B44DCB1D8F661700782398 /* directory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = directory.h; sourceTree = "<group>"; };
+		B9B44DCB1D8F661700782398 /* directory.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = directory.hpp; sourceTree = "<group>"; };
 		B9B44DCE1D8F661700782398 /* lljson.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lljson.cpp; sourceTree = "<group>"; };
-		B9B44DD11D8F661700782398 /* ll_stdhdr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ll_stdhdr.h; sourceTree = "<group>"; };
-		B9B44DD21D8F661700782398 /* lstring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lstring.h; sourceTree = "<group>"; };
-		B9B44DD31D8F661700782398 /* split.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = split.h; sourceTree = "<group>"; };
-		B9B44DD41D8F661700782398 /* SwapStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SwapStream.h; sourceTree = "<group>"; };
+		B9B44DD11D8F661700782398 /* ll_stdhdr.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ll_stdhdr.hpp; sourceTree = "<group>"; };
+		B9B44DD21D8F661700782398 /* lstring.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = lstring.hpp; sourceTree = "<group>"; };
+		B9B44DD31D8F661700782398 /* split.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = split.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,13 +65,12 @@
 			isa = PBXGroup;
 			children = (
 				B9B44DCA1D8F661700782398 /* directory.cpp */,
-				B9B44DCB1D8F661700782398 /* directory.h */,
+				B9B44DCB1D8F661700782398 /* directory.hpp */,
 				B9B44DCE1D8F661700782398 /* lljson.cpp */,
-				B9B44DD11D8F661700782398 /* ll_stdhdr.h */,
-				B9B44DD21D8F661700782398 /* lstring.h */,
-				B9B44DD31D8F661700782398 /* split.h */,
-				B9B44DD41D8F661700782398 /* SwapStream.h */,
-				B9777EC623A974600070DFCD /* json.h */,
+				B9B44DD11D8F661700782398 /* ll_stdhdr.hpp */,
+				B9B44DD21D8F661700782398 /* lstring.hpp */,
+				B9B44DD31D8F661700782398 /* split.hpp */,
+				B9777EC623A974600070DFCD /* json.hpp */,
 			);
 			path = lljson;
 			sourceTree = "<group>";

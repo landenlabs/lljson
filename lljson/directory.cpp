@@ -4,14 +4,14 @@
 //
 //-------------------------------------------------------------------------------------------------
 //
-// Author: Dennis Lang - 2019
+// Author: Dennis Lang - 2022
 // https://landenlabs.com
 //
 // This file is part of lljson project.
 //
 // ----- License ----
 //
-// Copyright (c) 2019 Dennis Lang
+// Copyright (c) 2022  Dennis Lang
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,16 +33,13 @@
 #include "directory.hpp"
 
 #include <iostream>
-#include <stdio.h>
 #include <errno.h>
+#include <stdio.h>
 
-#include "ll_stdhdr.hpp"
 
 #ifdef HAVE_WIN
-    #include <windows.h>
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
+#include <windows.h>
 
 const lstring ANY("\\*");
 lstring Directory_files::SLASH = "\\";
@@ -106,7 +103,7 @@ bool Directory_files::begin() {
 
     while (is_more
         && (isDir(my_dirent.dwFileAttributes)
-    && strspn(my_dirent.cFileName, ".") == strlen(my_dirent.cFileName) )) {
+        && strspn(my_dirent.cFileName, ".") == strlen(my_dirent.cFileName) )) {
         is_more = (FindNextFile(my_dir_hnd, &my_dirent) != 0);
     }
 
@@ -126,8 +123,7 @@ bool Directory_files::more() {
             is_more = (FindNextFile(my_dir_hnd, &my_dirent) != 0);
         } while (is_more
             && (isDir(my_dirent.dwFileAttributes)
-        && strspn(my_dirent.cFileName, ".") == strlen(my_dirent.cFileName)));
-
+            && strspn(my_dirent.cFileName, ".") == strlen(my_dirent.cFileName)));
     }
 
     return is_more;
@@ -140,8 +136,7 @@ bool Directory_files::is_directory() const {
 
 //-------------------------------------------------------------------------------------------------
 const char* Directory_files::name() const {
-    return (my_dir_hnd != INVALID_HANDLE_VALUE) ?
-        my_dirent.cFileName : NULL;
+    return (my_dir_hnd != INVALID_HANDLE_VALUE) ? my_dirent.cFileName : NULL;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -150,11 +145,16 @@ lstring& Directory_files::fullName(lstring& fname) const {
     return GetFullPath(fname);
 }
 
+//-------------------------------------------------------------------------------------------------
+bool Directory_files::exists(const char *path) {
+    const DWORD attr = GetFileAttributes(path);
+    return (attr != INVALID_FILE_ATTRIBUTES);
+}
 
 #else
 
-#include <unistd.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 lstring Directory_files::SLASH = "/";
 
@@ -200,6 +200,11 @@ lstring& Directory_files::fullName(lstring& fname) const {
     return join(fname, my_baseDir, my_pDirEnt->d_name);
 }
 
+//-------------------------------------------------------------------------------------------------
+bool Directory_files::exists(const char *path) {
+    return access(path, F_OK) == 0;
+}
+#endif
 
 //-------------------------------------------------------------------------------------------------
 lstring& Directory_files::join(lstring& outFull, const char* dir, const char* name) {
@@ -210,7 +215,3 @@ lstring& Directory_files::join(lstring& outFull, const char* dir, const char* na
     return outFull;
     // return GetFullPath(fname);
 }
-#endif
-
-
-
