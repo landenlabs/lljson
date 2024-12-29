@@ -29,6 +29,10 @@
     <ClInclude Include="..\lljson\lstring.h" />
     <ClInclude Include="..\lljson\split.h" />
     <ClInclude Include="..\lljson\SwapStream.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="lljson.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
