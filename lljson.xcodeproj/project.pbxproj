@@ -106,6 +106,8 @@
 				TargetAttributes = {
 					B9B44DBC1D8F65CD00782398 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = X7Z43FGG83;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -224,14 +226,24 @@
 		B9B44DC51D8F65CD00782398 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = X7Z43FGG83;
+				PRODUCT_BUNDLE_IDENTIFIER = "-pragma-once";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Debug;
 		};
 		B9B44DC61D8F65CD00782398 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = X7Z43FGG83;
+				PRODUCT_BUNDLE_IDENTIFIER = "-pragma-once";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};

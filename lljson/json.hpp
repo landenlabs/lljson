@@ -30,9 +30,12 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef json_h
-#define json_h
+#pragma once
 
+#include "ll_stdhdr.hpp"
+
+#include <iostream>
+#include <sstream>
 #include <vector>
 #include <map>
 #include <set>
@@ -41,7 +44,7 @@
 #include <exception>
 #include <assert.h>
 
-using namespace std;
+
 
 typedef std::vector<lstring> StringList;
 typedef std::map<string, StringList> MapList;
@@ -291,7 +294,3 @@ public:
 static JsonToken END_ARRAY(JsonToken::EndArray);
 static JsonToken END_GROUP(JsonToken::EndGroup);
 static JsonToken END_PARSE(JsonToken::EndParse);
-
-
-#endif /* json_h */
-

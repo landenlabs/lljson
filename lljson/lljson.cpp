@@ -54,7 +54,12 @@
 
 // 4291 - No matching operator delete found
 #pragma warning( disable : 4291 )
-#define _CRT_SECURE_NO_WARNINGS
+
+// Project files
+#include "ll_stdhdr.hpp"
+#include "directory.hpp"
+#include "split.hpp"
+#include "json.hpp"
 
 #include <stdio.h>
 #include <ctype.h>
@@ -69,13 +74,6 @@
 #include <exception>
 #include <assert.h>
 
-// Project files
-#include "ll_stdhdr.hpp"
-#include "directory.hpp"
-#include "split.hpp"
-#include "json.hpp"
-
-using namespace std;
 
 // Helper types
 typedef std::vector<std::regex> PatternList;
@@ -95,14 +93,11 @@ uint patternErrCnt = 0;
 
 
 #if defined(_WIN32) || defined(_WIN64)
-    const char SLASH_CHAR('\\');
     #include <assert.h>
     #define strncasecmp _strnicmp
     #if !defined(S_ISREG) && defined(S_IFMT) && defined(S_IFREG)
         #define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
     #endif
-#else
-    const char SLASH_CHAR('/');
 #endif
 
 // ---------------------------------------------------------------------------
