@@ -4,14 +4,14 @@
 //
 //-------------------------------------------------------------------------------------------------
 //
-// Author: Dennis Lang - 2019
+// Author: Dennis Lang - 2024
 // https://landenlabs.com
 //
 // This file is part of lljson project.
 //
 // ----- License ----
 //
-// Copyright (c) 2019 Dennis Lang
+// Copyright (c) 2024  Dennis Lang
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -37,10 +37,13 @@ typedef unsigned short  UShort;
 #if defined(_WIN32) || defined(_WIN64)
     #define HAVE_WIN
     #define NOMINMAX
-    #define _CRT_SECURE_NO_WARNINGS     // Before any includes
+    #define _CRT_SECURE_NO_WARNINGS   // define before all includes
+    // typedef unsigned long DWORD;
+#else
+    typedef unsigned int DWORD;
 #endif
 
 #include "lstring.hpp"
 
-// Specify last after include
+using namespace std;        // use after including c++ headers
 using namespace std;
