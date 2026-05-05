@@ -54,6 +54,7 @@
 
 // 4291 - No matching operator delete found
 #pragma warning( disable : 4291 )
+#define VERSION "v6.05.01"
 
 // Project files
 #include "ll_stdhdr.hpp"
@@ -441,7 +442,7 @@ bool ValidOption(const char* validCmd, const char* possibleCmd, bool reportErr =
 // ---------------------------------------------------------------------------
 int main(int argc, char* argv[]) {
     if (argc == 1) {
-        cerr << "\n" << argv[0] << "  Dennis Lang v1.1 (landenlabs.com) " __DATE__ << "\n"
+        cerr << "\n" << argv[0] << "  Dennis Lang " VERSION " (landenlabs.com) " __DATE__ << "\n"
             << "\nDes: Json parse and output as transposed CSV\n"
                 "Use: lljson [options] directories...   or  files\n"
                 "\n"
