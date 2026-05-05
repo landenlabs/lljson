@@ -54,7 +54,7 @@
 
 // 4291 - No matching operator delete found
 #pragma warning( disable : 4291 )
-#define VERSION "v6.05.04"
+#define VERSION "v6.05.05"
 
 // Project files
 #include "ll_stdhdr.hpp"
