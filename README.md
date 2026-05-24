@@ -1,8 +1,8 @@
-<table border="0">
+﻿<table border="0">
   <tr>
     <td>
-      <!-- VERSION -->v6.05.11<br>
-      <!-- DATE -->11-May-2026<br>
+      <!-- VERSION -->v6.05.23<br>
+      <!-- DATE -->24-May-2026<br>
       macOS<br>
       <a href="https://landenlabs.com">Home</a>
     </td>
