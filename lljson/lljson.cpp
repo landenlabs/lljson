@@ -306,11 +306,6 @@ static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
 // Dump parsed json in json format.
 void JsonDump(const JsonFields& base, ostream& out) {
     // If json parsed, first node can be ignored.
-    // find() (not at()) - at() throws std::out_of_range when "" isn't a key at all
-    // (e.g. an empty file, whitespace-only input, or a bare scalar at the JSON root
-    // never inserts one), which used to propagate out of here uncaught. The old
-    // "if (base.at(\"\") != NULL)" guard could never actually protect against that,
-    // since at() throws before the null check would even run.
     auto it = base.find("");
     if (it != base.end() && it->second != NULL) {
         it->second->dump(out);
