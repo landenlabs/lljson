@@ -79,6 +79,8 @@ public:
     JsonBase(const JsonBase& other) {
         mJtype = other.mJtype;
     }
+    virtual ~JsonBase() { }   // used polymorphically everywhere via JsonBase* (VecJson, MapJson)
+
     virtual
     string toString() const = 0;
 
@@ -153,8 +155,8 @@ public:
     }
 
     ostream& dump(ostream& out) const {
-        cout << toString();
-        return cout;
+        out << toString();
+        return out;
     }
 
     void toMapList(MapList& mapList, StringList& keys) const {

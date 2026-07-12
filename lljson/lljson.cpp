@@ -73,6 +73,7 @@
 #include <algorithm>
 #include <regex>
 #include <exception>
+#include <stdexcept>
 #include <assert.h>
 
 
@@ -132,12 +133,29 @@ static void assertValid(const char* ptr, const char* body) {
     }
 }
 
+// True if the character at quotePtr is escaped - i.e. preceded by an ODD number of
+// consecutive backslashes (an even run means those backslashes are all paired up
+// escaping each other, so the character itself is not escaped). Checking only the
+// single preceding byte (as this used to do) misclassifies a string ending in an
+// escaped backslash immediately before the real closing quote - e.g. the JSON
+// string "C:\\" (bytes C : \ \ ") - as still being inside the string, since that
+// single check sees the second backslash and assumes the quote is escaped.
+static bool isEscapedChar(const char* strStart, const char* charPtr) {
+    int backslashCount = 0;
+    const char* p = charPtr - 1;
+    while (p >= strStart && *p == '\\') {
+        backslashCount++;
+        p--;
+    }
+    return (backslashCount % 2) != 0;
+}
+
 // ---------------------------------------------------------------------------
 // Parse json word surrounded by quotes.
 static void getJsonWord( JsonBuffer& buffer, char delim, JsonToken& word) {
 
     const char* lastPtr = strchr(buffer.ptr(), delim);
-    while (lastPtr != nullptr && lastPtr[-1] == '\\') {
+    while (lastPtr != nullptr && isEscapedChar(buffer.ptr(), lastPtr)) {
         lastPtr = strchr(lastPtr + 1, delim);
     }
     assertValid(lastPtr,  buffer.ptr());
@@ -198,7 +216,22 @@ static void addJsonValue(JsonFields& jsonFields, JsonToken& fieldName, JsonToken
 }
 
 // ---------------------------------------------------------------------------
+// parseJson/getJsonArray/getJsonGroup are mutually recursive with no depth limit -
+// deeply nested (or maliciously crafted) input would otherwise recurse until the
+// native stack overflows. jsonDepth/MAX_JSON_DEPTH bound that via a simple RAII
+// guard incremented once per parseJson call (the one choke point all three funnel
+// through), throwing a normal, already-caught exception instead of crashing.
+static const int MAX_JSON_DEPTH = 200;
+static int jsonDepth = 0;
+
 static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
+    struct DepthGuard {
+        DepthGuard()  { jsonDepth++; }
+        ~DepthGuard() { jsonDepth--; }
+    } depthGuard;
+    if (jsonDepth > MAX_JSON_DEPTH) {
+        throw std::runtime_error("JSON nesting too deep, aborting parse");
+    }
 
     JsonToken fieldName = "";
     JsonToken fieldValue;
@@ -273,27 +306,51 @@ static JsonToken parseJson(JsonBuffer& buffer, JsonFields& jsonFields) {
 // Dump parsed json in json format.
 void JsonDump(const JsonFields& base, ostream& out) {
     // If json parsed, first node can be ignored.
-    if (base.at("") != NULL) {
-        base.at("")->dump(out);
+    // find() (not at()) - at() throws std::out_of_range when "" isn't a key at all
+    // (e.g. an empty file, whitespace-only input, or a bare scalar at the JSON root
+    // never inserts one), which used to propagate out of here uncaught. The old
+    // "if (base.at(\"\") != NULL)" guard could never actually protect against that,
+    // since at() throws before the null check would even run.
+    auto it = base.find("");
+    if (it != base.end() && it->second != NULL) {
+        it->second->dump(out);
     }
+}
+
+// ---------------------------------------------------------------------------
+// Quote a CSV field per RFC 4180 if it contains a comma, quote, or newline -
+// otherwise JsonTranspose's output has no field escaping at all, so a JSON string
+// value containing a literal comma silently corrupts the CSV's column structure.
+static string csvField(const string& value) {
+    if (value.find_first_of(",\"\n\r") == string::npos) {
+        return value;
+    }
+    string quoted = "\"";
+    for (char c : value) {
+        if (c == '"') quoted += '"';   // double an embedded quote
+        quoted += c;
+    }
+    quoted += '"';
+    return quoted;
 }
 
 // ---------------------------------------------------------------------------
 // Output json in CSV format with the arrays as columns.
 void JsonTranspose(const JsonFields& base, ostream& out) {
-    if (base.at("") != NULL) {
+    auto rootIt = base.find("");
+    if (rootIt != base.end() && rootIt->second != NULL) {
         MapList mapList;
         StringList keys;
-        base.at("")->toMapList(mapList, keys);
+        rootIt->second->toMapList(mapList, keys);
 
         MapList::iterator it = mapList.begin();
         bool addComma = false;
         size_t maxRows = 0;
         while (it != mapList.end()) {
-            if (addComma) cout << ", ";
+            if (addComma) out << ", ";
             addComma = true;
 
-            out << it->first;
+            out << csvField(it->first);
             maxRows = std::max(maxRows, it->second.size());
             it++;
         }
@@ -303,10 +360,10 @@ void JsonTranspose(const JsonFields& base, ostream& out) {
         for (unsigned row = 0; row < maxRows; row++) {
             addComma = false;
             for (it = mapList.begin(); it != mapList.end(); it++) {
-                if (addComma) cout << ", ";
+                if (addComma) out << ", ";
                 addComma = true;
                 if (row < it->second.size()) {
-                    out << it->second.at(row);
+                    out << csvField(it->second.at(row));
                 }
 
             }
@@ -478,7 +535,11 @@ int main(int argc, char* argv[]) {
         bool doParseCmds = true;
         string endCmds = "--";
         for (int argn = 1; argn < argc; argn++) {
-            if (*argv[argn] == '-' && doParseCmds) {
+            // A lone "-" is the documented "read paths from stdin" marker, not an option -
+            // it used to be caught by the generic '-'-prefix check below and reported as
+            // "Unknown command -", so it could never reach fileDirList for the -instream
+            // check further down to ever see it.
+            if (*argv[argn] == '-' && doParseCmds && strcmp(argv[argn], "-") != 0) {
                 lstring argStr(argv[argn]);
                 Split cmdValue(argStr, "=", 2);
                 if (cmdValue.size() == 2) {
