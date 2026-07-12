@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\lljson\directory.cpp">
+    <ClCompile Include="..\llcommon\directory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\lljson\lljson.cpp">

@@ -26,12 +26,12 @@
 /* Begin PBXFileReference section */
 		B9777EC623A974600070DFCD /* json.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
 		B9B44DBD1D8F65CD00782398 /* lljson */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = lljson; sourceTree = BUILT_PRODUCTS_DIR; };
-		B9B44DCA1D8F661700782398 /* directory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = directory.cpp; sourceTree = "<group>"; };
-		B9B44DCB1D8F661700782398 /* directory.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = directory.hpp; sourceTree = "<group>"; };
+		B9B44DCA1D8F661700782398 /* directory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ../llcommon/directory.cpp; sourceTree = "<group>"; };
+		B9B44DCB1D8F661700782398 /* directory.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ../llcommon/directory.hpp; sourceTree = "<group>"; };
 		B9B44DCE1D8F661700782398 /* lljson.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lljson.cpp; sourceTree = "<group>"; };
-		B9B44DD11D8F661700782398 /* ll_stdhdr.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ll_stdhdr.hpp; sourceTree = "<group>"; };
-		B9B44DD21D8F661700782398 /* lstring.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = lstring.hpp; sourceTree = "<group>"; };
-		B9B44DD31D8F661700782398 /* split.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = split.hpp; sourceTree = "<group>"; };
+		B9B44DD11D8F661700782398 /* ll_stdhdr.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ../llcommon/ll_stdhdr.hpp; sourceTree = "<group>"; };
+		B9B44DD21D8F661700782398 /* lstring.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ../llcommon/lstring.hpp; sourceTree = "<group>"; };
+		B9B44DD31D8F661700782398 /* split.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ../llcommon/split.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -229,6 +229,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X7Z43FGG83;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../llcommon";
 				PRODUCT_BUNDLE_IDENTIFIER = "-pragma-once";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -241,6 +242,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X7Z43FGG83;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../llcommon";
 				PRODUCT_BUNDLE_IDENTIFIER = "-pragma-once";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

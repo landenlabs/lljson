@@ -9,6 +9,8 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Build
         run: |
@@ -36,6 +38,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2

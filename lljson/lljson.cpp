@@ -104,7 +104,7 @@ uint patternErrCnt = 0;
 // ---------------------------------------------------------------------------
 // Extract name part from path.
 lstring& getName(lstring& outName, const lstring& inPath) {
-    size_t nameStart = inPath.rfind(SLASH_CHAR) + 1;
+    size_t nameStart = inPath.rfind(Directory_files::SLASH_CHAR) + 1;
     if (nameStart == 0)
         outName = inPath;
     else
