@@ -494,40 +494,45 @@ bool ValidOption(const char* validCmd, const char* possibleCmd, bool reportErr =
 
 
 // ---------------------------------------------------------------------------
+void showHelp(const char* argv0) {
+    cerr << "\n" << argv0 << "  Dennis Lang " VERSION " (landenlabs.com) " __DATE__ << "\n"
+        << "\nDes: Json parse and output as transposed CSV\n"
+            "Use: lljson [options] directories...   or  files\n"
+            "\n"
+            " Options (only first unique characters required, options can be repeated):\n"
+            "   -includefile=<filePattern>   ; Include files by regex match \n"
+            "   -excludefile=<filePattern>   ; Exclude files by regex match \n"
+            "   -verbose                     ; Only dump parsed json\n"
+            "\n"
+            " Example:\n"
+            "   lljson -inc=*.json -ex=foo.json -ex=bar.json dir1/subdir dir2 file1.json file2.json "
+            "\n"
+            " Example input json:\n"
+            "   {\n"
+            "      \"cloudCover\": [\n"
+            "        10,\n"
+            "        30,\n"
+            "        49\n"
+            "      ],\n"
+            "        \"dayOfWeek\": [\n"
+            "        \"Monday\",\n"
+            "        \"Tuesday\",\n"
+            "        \"Wednesday\"\n"
+            "      ]\n"
+            "   }\n"
+            "\n"
+            "   Output transposed CSV\n"
+            "    cloudCover,  dayOfWeek\n"
+            "     10, Monday\n"
+            "     30, Tuesday\n"
+            "     49, WednesDay\n"
+            "\n";
+}
+
+// ---------------------------------------------------------------------------
 int main(int argc, char* argv[]) {
     if (argc == 1) {
-        cerr << "\n" << argv[0] << "  Dennis Lang " VERSION " (landenlabs.com) " __DATE__ << "\n"
-            << "\nDes: Json parse and output as transposed CSV\n"
-                "Use: lljson [options] directories...   or  files\n"
-                "\n"
-                " Options (only first unique characters required, options can be repeated):\n"
-                "   -includefile=<filePattern>   ; Include files by regex match \n"
-                "   -excludefile=<filePattern>   ; Exclude files by regex match \n"
-                "   -verbose                     ; Only dump parsed json\n"
-                "\n"
-                " Example:\n"
-                "   lljson -inc=*.json -ex=foo.json -ex=bar.json dir1/subdir dir2 file1.json file2.json "
-                "\n"
-                " Example input json:\n"
-                "   {\n"
-                "      \"cloudCover\": [\n"
-                "        10,\n"
-                "        30,\n"
-                "        49\n"
-                "      ],\n"
-                "        \"dayOfWeek\": [\n"
-                "        \"Monday\",\n"
-                "        \"Tuesday\",\n"
-                "        \"Wednesday\"\n"
-                "      ]\n"
-                "   }\n"
-                "\n"
-                "   Output transposed CSV\n"
-                "    cloudCover,  dayOfWeek\n"
-                "     10, Monday\n"
-                "     30, Tuesday\n"
-                "     49, WednesDay\n"
-                "\n";
+        showHelp(argv[0]);
     } else {
         bool doParseCmds = true;
         string endCmds = "--";
@@ -563,13 +568,25 @@ int main(int argc, char* argv[]) {
                         break;
                     }
                 } else {
-                    switch (argStr[(unsigned)1]) {
+                    const char* cmdName = argStr + 1;
+                    if (argStr.length() > 2 && *cmdName == '-')
+                        cmdName++;  // allow -- prefix on commands
+                    switch (*cmdName) {
                     case 'v':   // -v=true or -v=anyThing
                         verbose = true;
                         continue;
                     case 'i':
-                        if (ValidOption("instream", argStr + 1)) {
+                        if (ValidOption("instream", cmdName)) {
                             instream = true;
+                        }
+                        break;
+                    case '?':
+                        showHelp(argv[0]);
+                        return 0;
+                    case 'h':
+                        if (ValidOption("help", cmdName)) {
+                            showHelp(argv[0]);
+                            return 0;
                         }
                         break;
                     }
