@@ -17,7 +17,8 @@
 # lljson
 OSX / Linux / DOS  Json conversion of arrays to transposed columns in CSV format. 
 
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.txt)
+[![Build status](https://github.com/landenlabs/lljson/actions/workflows/build.yml/badge.svg)](https://github.com/landenlabs/lljson/actions/workflows/build.yml)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](llcommon/LICENSE)
 ![Language](https://img.shields.io/badge/language-C%2B%2B17-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows-lightgrey.svg)
 
@@ -84,7 +85,7 @@ Visit home website
 
 Help Banner:
 <pre>
-lljson  Dennis Lang v1.1 (landenlabs.com) Dec 20 2019
+lljson  Dennis Lang v6.07.10 (landenlabs.com) Aug 13 2026
 
 Des: Json parse and output as transposed CSV
 Use: lljson [options] directories...   or  files
@@ -134,4 +135,4 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
-See [LICENSE.txt](LICENSE.txt) for the full license text.
+See [llcommon/LICENSE](llcommon/LICENSE) for the full license text.
